@@ -194,10 +194,11 @@
     const videoSrc = 'http://168.227.22.23:8888/{{ $camera->slug }}/index.m3u8';
 
 	const hls = new Hls({
-		maxBufferLength: 30,
-		maxMaxBufferLength: 60,
-		enableWorker: true,
-		lowLatencyMode: true
+	//	maxBufferLength: 30,
+	//	maxMaxBufferLength: 60,
+	//	enableWorker: true,
+	//	lowLatencyMode: true,
+		debug: true
 	});
 	
 	hls.loadSource(videoSrc);
