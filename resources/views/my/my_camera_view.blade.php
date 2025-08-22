@@ -143,7 +143,7 @@
             autoplay: true,
             muted: true,
             sources: [{
-                src: `http://127.0.0.1:8888/{{$camera->slug}}/index.m3u8`,
+                src: `http://168.227.22.23:8888/{{$camera->slug}}/index.m3u8`,
                 type: 'application/x-mpegURL'
             }]
         });
