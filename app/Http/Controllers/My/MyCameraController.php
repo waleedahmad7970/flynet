@@ -74,7 +74,7 @@ class MyCameraController extends Controller
         // Handle date filtering
         if ($changeDate) {
             // Parse the datetime-local input format and convert to Carbon instance
-            $selectedDateTime = Carbon::parse($changeDate, 'Asia/Karachi');
+            $selectedDateTime = Carbon::parse($changeDate, 'America/New_York');
 
             // Get recordings from the selected time going back by the specified minutes
             $recordings = CameraRecording::where('camera_id', $camera->id)
@@ -86,7 +86,7 @@ class MyCameraController extends Controller
         } elseif ($minutes) {
             // Default behavior - get recordings from current time going back
             $recordings = CameraRecording::where('camera_id', $camera->id)
-                ->where('start_time', '>=', now('Asia/Karachi')->subMinutes($minutes + 1))
+                ->where('start_time', '>=', now('America/New_York')->subMinutes($minutes + 1))
                 ->orderBy('start_time', 'asc')
                 ->get();
         }
@@ -103,7 +103,7 @@ class MyCameraController extends Controller
         $camera = $this->camera_service->getById($id);
 
         $recordings = CameraRecording::select('file_path','start_time','end_time')->where('camera_id', $camera->id)
-                                    ->where('start_time', '>=', now('Asia/Karachi')->subMinutes($minutes+1))
+                                    ->where('start_time', '>=', now('America/New_York')->subMinutes($minutes+1))
                                     ->orderBy('start_time', 'asc')
                                     ->get();
 
@@ -111,12 +111,12 @@ class MyCameraController extends Controller
         // If you want to return the recordings with file_path as a full URL, map them here:
         $recordings = $recordings->map(function($rec) {
             $rec->file_path = asset($rec->file_path);
-               // Use Asia/Karachi so the offset is +0500
-            $rec->end_time = Carbon::parse($rec->end_time, 'Asia/Karachi')
-                                    ->format('D M d Y H:i:s') . ' GMT' . Carbon::parse($rec->end_time, 'Asia/Karachi')->format('O');
+               // Use America/New_York so the offset is +0500
+            $rec->end_time = Carbon::parse($rec->end_time, 'America/New_York')
+                                    ->format('D M d Y H:i:s') . ' GMT' . Carbon::parse($rec->end_time, 'America/New_York')->format('O');
 
-            $rec->start_time = Carbon::parse($rec->start_time, 'Asia/Karachi')
-                                    ->format('D M d Y H:i:s') . ' GMT' . Carbon::parse($rec->start_time, 'Asia/Karachi')->format('O');
+            $rec->start_time = Carbon::parse($rec->start_time, 'America/New_York')
+                                    ->format('D M d Y H:i:s') . ' GMT' . Carbon::parse($rec->start_time, 'America/New_York')->format('O');
 
             return $rec;
         });
