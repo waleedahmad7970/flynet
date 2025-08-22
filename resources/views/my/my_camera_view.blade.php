@@ -45,7 +45,7 @@
                                                         <div class="vjs-playlist my-3"></div>
                                                     </div>
                                                 @else
-                                                    <video id="video" width="100%" controls autoplay muted></video>
+                                                    <video id="videoPlayer" width="100%" controls autoplay muted></video>
                                                     <div class="caption">
                                                         🔴 {{$camera->name??''}}
                                                         @php
