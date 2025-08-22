@@ -38,21 +38,7 @@ class CameraService
                             </label>";
                   })
                   ->addColumn('action', function ($item) {
-                        $action_column = '';
-                        $edit_column    = "<a class='btn btn-warning btn-sm mr-2' href='cameras/edit/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-edit'></i>Edit</a>";
-                        $view_column    = "<a class='btn btn-info btn-sm mr-2' href='cameras/view/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-eye'></i>View</a>";
-                        $delete_column = "<button class='btn btn-danger btn-sm delete-camera' data-id='{$item->id}'><i class='fa fa-trash'></i> Delete</button>";
-                        // if(Auth::user()->can('cameras_edit'))
-                        $action_column .= $edit_column;
-
-                        // if(Auth::user()->can('cameras_view'))
-                        $action_column .= $view_column;
-
-                        // if(Auth::user()->can('cameras_delete'))
-                        $action_column .= $delete_column;
-
-
-                        return $action_column;
+                    return view('cameras.inc.actions', compact('item'))->render();
                   })
                   ->rawColumns(['active', 'action'])
                   ->make(true);
@@ -80,6 +66,11 @@ class CameraService
       public function allActiveCamera()
       {
             return $this->model_camera->getModel()::where('is_active', 1)->get();
+      }
+
+    public function getAllCameras()
+      {
+            return $this->model_camera->getModel()::get();
       }
 
       public function save($obj)
@@ -315,6 +306,7 @@ class CameraService
                   ->whereHas('camera', function ($query) {
                         $query->where('createdby_id', auth()->id());
                   })
+                  ->where('recording_type', 'manual')
                   ->get();
       }
 

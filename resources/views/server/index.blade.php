@@ -33,27 +33,25 @@
                                                             <th>Cameras</th>
                                                             <th>Processor</th>
                                                             <th>Memory</th>
-                                                            <th>System</th>
+                                                            <th>OS</th>
                                                             <th>Storage</th>
                                                             <th>Network</th>
                                                             <th>Performance</th>
                                                             <th>Online</th>
-                                                            <th>Tag</th>
                                                             <th>Action</th>
                                                       </tr>
                                                 </thead>
                                                 <tbody>
                                                       <tr>
-                                                            <td>FlynetES-01</td>
+                                                            <td>{{ $server_details['server_name'] }}</td>
                                                             <td>189 / 300</td>
-                                                            <td><span class="badge badge-success">9.5%</span></td>
-                                                            <td><span class="badge badge-success">21%</span></td>
-                                                            <td>37 GB / 98 GB <span class="badge badge-success">40%</span></td>
-                                                            <td>28.29 TB / 232.84 TB <span class="badge badge-success">40%</span></td>
-                                                            <td><span class="fas fa-arrow-down" style="color:red;"></span> 347.47 Mbps /  73.62 Mbps <span class="fas fa-arrow-up" style="color:red;"></span></td>
+                                                            <td>{{ $server_details['cpu']['model'] }} <span class="badge badge-success">{{ $server_details['cpu']['usage_percent'] . '%' }}</span></td>
+                                                            <td>{{ $server_details['memory']['used_gb'] }} GB / {{ $server_details['memory']['total_gb'] }} GB <span class="badge badge-success">{{ $server_details['memory']['used_percentage'] . '%' }}</span></td>
+                                                            <td>{{ $server_details['os'] }}</td>
+                                                            <td>{{ $server_details['storage']['used_gb'] }} GB / {{ $server_details['storage']['total_gb'] }} GB <span class="badge badge-success">{{ $server_details['storage']['used_percentage'] . '%' }}</span></td>
+                                                            <td><span class="fas fa-arrow-down" style="color:red;"></span> {{ $server_details['network_MB']['received_MB'] }} Mbps / {{ $server_details['network_MB']['sent_MB'] }} Mbps <span class="fas fa-arrow-up" style="color:red;"></span></td>
                                                             <td><span class="badge badge-success">Great</span></td>
                                                             <td><span class="fas fa-check" style="color:green;"></span></td>
-                                                            <td><a href="#" class="btn btn-info btn-sm"><span class="fa fa-edit"></span></a></td>
                                                             <td>
                                                                   <a href="#" class="btn btn-danger btn-sm"><span class="fa fa-cog"></span></a>
                                                             </td>

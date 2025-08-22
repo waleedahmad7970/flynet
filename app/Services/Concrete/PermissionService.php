@@ -28,13 +28,7 @@ class PermissionService
         $model = Permission::get();
         $data = DataTables::of($model)
             ->addColumn('action', function ($item) {
-                $action_column = '';
-                $edit_column    = "<a class='btn btn-warning btn-sm mr-2' href='permissions/edit/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-edit'></i>Edit</a>";
-
-                // if(Auth::user()->can('permissions_edit'))
-                $action_column .= $edit_column;
-
-                return $action_column;
+                return view('permissions.inc.actions', compact('item'))->render();
             })
             ->rawColumns(['action'])
             ->make(true);

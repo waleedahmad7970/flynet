@@ -52,7 +52,7 @@ class PermissionController extends Controller
 
             $obj = [
                 "id"    => $request->id,
-                "name"  => $request->name
+                "name"  => strtolower($request->name)
             ];
 
             $permission = $this->permission_service->save($obj);
@@ -67,9 +67,10 @@ class PermissionController extends Controller
         }
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         // abort_if(Gate::denies('permissions_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         $permission = $this->permission_service->getById($id);
-        return view('permissions.create',compact('permission'));
+        return view('permissions.create', compact('permission'));
     }
 }

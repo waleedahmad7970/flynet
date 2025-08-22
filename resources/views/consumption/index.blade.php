@@ -70,17 +70,17 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                       <div class="form-group">
-                                                            <label class="col-form-label" for="resolution">Resolution </label>
-                                                            <select id="resolution" class="form-control">
-                                                                  <option value="VGA 375Kbps">(VGA) 375Kbps</option>
-                                                                  <option value="720p 1Mbps">(720p) 1Mbps</option>
-                                                                  <option value="Custom">Custom</option>
+                                                            <label class="col-form-label" for="resDropdown">Resolution </label>
+                                                            <select class="form-control" id="resDropdown">
+                                                                  <option value="375">(VGA) 375Kbps</option>
+                                                                  <option value="1000">(720p) 1Mbps</option>
+                                                                  <option value="custom">Custom</option>
                                                             </select>
                                                       </div>
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-1" id="kbpsDiv">
                                                       <div class="form-group">
-                                                            <label class="col-form-label" for="kbps">Kbps </label>
+                                                            <label class="col-form-label" for="kbps">Kpbs </label>
                                                             <input type="number" class="form-control" id="kbps" placeholder="kbps">
                                                       </div>
                                                 </div>
@@ -99,10 +99,10 @@
                                                 <div class="col-md-2">
                                                       <div class="form-group">
                                                             <label class="col-form-label" for="storage">Storage </label>
-                                                            <input type="text" class="form-control" id="storage" placeholder="storage">
+                                                            <input type="text" class="form-control" disabled id="storage" placeholder="storage">
                                                       </div>
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-1 mt-5">
                                                       <div class="form-group">
                                                             <button id="add" class="btn btn-primary">+ Add</button>
                                                       </div>
@@ -157,10 +157,28 @@
       }
 
       $(document).ready(function() {
+
+            $('#kbpsDiv').hide();
+
+            $('#resDropdown').on('change', function() {
+                if ($(this).val() === 'custom') {
+                    $('#kbpsDiv').slideDown(); // show with animation
+                } else {
+                    $('#kbpsDiv').slideUp();   // hide with animation
+                }
+            });
+
             $('#add').click(function() {
                   const desc = $('#description').val();
-                  const res = $('#resolution').val();
-                  const kbps = parseInt($('#kbps').val());
+                  const res = $('#resDropdown').val();
+
+                  let kbps;
+                  if(res === 'custom') {
+                    kbps = parseInt($('#kbps').val());
+                  } else {
+                    kbps = parseInt(res);
+                  }
+
                   const cams = parseInt($('#cameras').val());
                   const days = parseInt($('#days').val());
                   const storage = calculateStorage(kbps, cams, days);
@@ -168,15 +186,15 @@
                   $('#storage').val(storage);
 
                   const row = `
-        <tr>
-          <td>${desc}</td>
-          <td>${res} (${kbps}Kbps)</td>
-          <td>${cams}</td>
-          <td>${days}</td>
-          <td>${storage}</td>
-          <td><button class="delete-btn"><span class="fa fa-trash"></span></button></td>
-        </tr>
-      `;
+                                <tr>
+                                <td>${desc}</td>
+                                <td>${res} (${kbps}Kbps)</td>
+                                <td>${cams}</td>
+                                <td>${days}</td>
+                                <td>${storage}</td>
+                                <td><button class="delete-btn"><span class="fa fa-trash"></span></button></td>
+                                </tr>
+                            `;
                   $('#data-body').append(row);
             });
 

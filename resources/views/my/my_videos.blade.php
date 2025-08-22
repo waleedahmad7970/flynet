@@ -7,15 +7,15 @@
         ***********************************-->
 <div class="content-body">
 
-      <div class="row page-titles mx-0">
-            <div class="col p-md-0">
-                  <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="{{url('dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">My Videos</a></li>
-                  </ol>
-            </div>
-      </div>
-      <!-- row -->
+    <div class="row page-titles mx-0">
+        <div class="col p-md-0">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{url('dashboard')}}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">My Videos</a></li>
+                </ol>
+        </div>
+    </div>
+    <!-- row -->
 
       <div class="container-fluid">
             <div class="row">
@@ -28,12 +28,16 @@
                                     <div class="row">
                                           <div class="col-md-8">
                                                 @php
-                                                $latestRecording = $camera_recordings->first();
+                                                    $latestRecording = $camera_recordings->first();
                                                 @endphp
-                                                <video width="100%" height="auto" controls>
-                                                      <source src="{{ asset('storage/recordings/' . basename($latestRecording->file_path??'')) }}" type="video/mp4">
-                                                      Your browser does not support the video tag.
-                                                </video>
+                                                @if(isset($latestRecording))
+                                                    <video width="100%" height="auto" controls>
+                                                        <source src="{{ asset('storage/recordings/' . basename($latestRecording->file_path??'')) }}" type="video/mp4">
+                                                        Your browser does not support the video tag.
+                                                    </video>
+                                                @else
+                                                    <p>No video found!</p>
+                                                @endif
                                           </div>
                                           <div class="col-md-4">
                                                 <h5>{{$camera_recordings->count()}} Videos</h5>

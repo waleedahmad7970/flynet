@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('css')
 <style>
-    .caption {
+	/* .caption {
 		margin-top: 15px;
 		background: #fff;
 		padding: 10px;
@@ -10,37 +10,141 @@
 		font-size: 14px;
 		color: #333;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-	}
-	.time-btn {
-		background-color: #f0f0f0; 
-		color: #333333; 
-		padding: 7px 14px; 
-		border: 0; 
-		border-radius: 25px; 
-		font-weight: 500;
-	}
-	.time-active {
-		background-color: #0096FC !important;
-		color: #ffffff !important;
-	}
-	/* #timelineContainer {
-            width: 640px;
-            margin: 10px auto;
-            text-align: center;
+	} */
+    .timeline-wrapper{
+        &{
+                padding: 15px;
+                background: #fff;
+                border-radius: 8px;
+                margin-bottom: 10px;
         }
-        #timeLabel {
-            font-size: 14px;
-            margin-top: 5px;
+        input[type="datetime-local"]{
+                border: 1px solid #cacaca;
+                border-radius: 20px;
+                padding: 4px 10px;
         }
-        #timeline {
-            width: 100%;
-            appearance: none;
-            height: 8px;
-            background: #2196f3;
-            border-radius: 4px;
-            outline: none;
-            margin-top: 10px;
-        } */
+    }
+                  
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .time-filters a,.time-filters button {
+        background: #f0f0f0;
+        border: none;
+        padding: 6px 12px;
+        margin: 0 4px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .time-filters a.active,.time-filters button.active {
+        background: #007bff;
+        color: #fff;
+    }
+
+    .timeline-bar {
+        margin-top: 10px;
+        height: 30px;
+        background: #e9f3ff;
+        position: relative;
+        border-radius: 4px;
+    }
+
+    .timeline-segment {
+        height: 10px;
+        position: absolute;
+        background: #007bff;
+        cursor: pointer;
+        border-right: 1px solid #fff;
+        transition: background 0.2s;
+        min-width: 5%;
+        bottom: 0;
+    }
+
+    .timeline-segment span{
+        color: black;
+        top: 15px;
+        position: relative;
+        left: -17px;
+        font-size: 12px;
+    }
+
+    .timeline-segment:has(span)::before {
+        content:'';
+        background:black;
+        width: 1px;
+        height: 12px;
+        display: block;
+    }
+
+    .timeline-segment:hover {
+        background: #0056b3;
+    }
+
+    .caption {
+        margin-top: 15px;
+        background: #fff;
+        padding: 10px;
+        display: inline-block;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #333;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .time-filters a, .time-filters button{
+            font-size: 12px
+    }
+
+                        
+    #timeline-indicator {
+        position: absolute;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background: red;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    #timeline-indicator{
+        span {
+            width: 60px;
+            display: block;
+            position: relative;
+            top: -20px;
+            color: white;
+            font-size: 10px;
+            background: black;
+            padding: 3px 10px;
+            left: -30px;
+        }
+    }
+
+    #timeline-indicator  ::after{
+        content: " ";
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid black;
+        position: relative;
+        top: 25px;
+        left: -27px;
+    }
+
+    @media(max-width:768px){
+        .timeline-segment{
+            span{
+                    display:none
+            }
+        }
+    }
 
 </style>
 @endsection
@@ -61,129 +165,87 @@
 	</div>
       <!-- row -->
 
-      <div class="container-fluid">
-            <div class="row">
-                  <div class="col-12">
-                        @if(session('success'))
-                        <script>
-                              toastr.success('{{ session('
-                                    success ') }}');
-                        </script>
-                        @endif
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                @if(session('success'))
+                <script>
+                        toastr.success('{{ session('
+                            success ') }}');
+                </script>
+                @endif
 
-                        @if(session('error'))
-                        <script>
-                              toastr.error('{{ session('
-                                    error ') }}');
-                        </script>
-                        @endif
-                        <div class="card">
-                              <div class="card-header d-flex justify-content-between align-items-center">
-                                    <h4 class="card-title mb-0">View Camera</h4>
-                              </div>
-                              <div class="card-body border">
-                                    <video id="video" width="100%" controls autoplay muted></video>
-									<h3 class="mt-2"><b>{{ $camera->name }}</b></h3>
-                                    <div class="mt-1">
-										<button type="button" class="btn btn-outline-secondary time-btn" data-hours="60">1 Hour</button>
-										<button type="button" class="btn btn-outline-secondary time-btn" data-hours="30">30 Minutes</button>
-										<button type="button" class="btn btn-outline-secondary time-btn" data-hours="15">15 Minutes</button>
-										<button type="button" class="btn btn-outline-secondary time-btn" data-hours="10">10 Minutes</button>
-										<button type="button" class="btn btn-outline-secondary time-btn time-active" data-hours="5">5 Minutes</button>
-										<button 
-											type="button" 
-											class="btn btn-outline-secondary time-btn" 
-											data-toggle="modal" 
-											data-target="#intervalModal"
-										>
-											{{ \Carbon\Carbon::today()->format('d/m/Y') }}
-											<i class="mdi mdi-calendar-edit ml-1"></i>
-										</button>
-                                    </div> 
-									<!-- <div id="timelineContainer">
-										<input type="range" id="timeline" min="0" max="3600" value="0">
-										<div id="timeLabel">00:00:00</div>
-									</div> -->
-									<!-- <div id="camera-timestamp"></div> -->
-																									
-                                    <div class="caption">
-                                          🔴 {{ $camera->name ?? '' }}
+                @if(session('error'))
+                <script>
+                        toastr.error('{{ session('
+                            error ') }}');
+                </script>
+                @endif
 
-                                          {{-- Show the latest recording download link --}}
-                                          @php
-                                          $latestRecording = $camera->recordings()->latest()->first();
-                                          @endphp
-
-                                          @if ($latestRecording)
-                                          <a href="{{ url('cameras/download-recording/'. $latestRecording->id) }}" class="btn btn-success btn-md m-1">
-                                                <i class="fa fa-download"></i> Download Last Video
-                                          </a>
-                                          @endif
-
-                                          {{-- Trigger new recording --}}
-                                          <button id="recordBtn" class="btn btn-primary btn-md m-1" data-id="{{ $camera->id }}">
-                                                <i class="fa fa-video"></i> Record New Video
-                                          </button>
-                                          <span id="recordTimer" class="ml-2 text-danger font-weight-bold"></span>
-                                    </div>
-
-                              </div>
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0">View Camera</h4>
+                    </div>
+                    <div class="card-body">
+                        <video id="video" width="100%" controls autoplay muted></video>
+						<h3 class="mt-2"><b>{{ $camera->name }}</b></h3>
+                                                      
+                        <div class="timeline-wrapper">
+                            <div class="timeline-header">
+                                <div class="d-block w-100">
+                                        <h4>{{ $camera->name }}</h4>
+                                </div>
+                                <div class="time-filters">
+                                <button data-range="1440">24 Hours</button>
+                                    <button data-range="720">12 Hours</button>
+                                    <button data-range="60">1 Hours</button>
+                                    <button data-range="30">30 Minutes</button>
+                                    <button data-range="5" class="active">5 Minutes</button>
+                                    <input id="time_range" name="date_range" onchange="changeDate(this)"
+                                    min="{{ now()->subDays(3)->format('Y-m-d\TH:i') }}" 
+                                    max="{{ now()->format('Y-m-d\TH:i') }}"
+                                    value="{{ now()->format('Y-m-d\TH:i') }}"
+                                    type="datetime-local">
+                                </div>
+                            </div>
+                            
+                            <div id="timeline-bar" class="timeline-bar">
+                                <!-- JS will populate segments here -->
+                                <div id="timeline-indicator"></div>
+                            </div>
                         </div>
-                  </div>
+
+                        <div class="caption">
+                            🔴 {{ $camera->name ?? '' }}
+
+                            {{-- Show the latest recording download link --}}
+                            @php
+                            $latestRecording = $camera->recordings()->latest()->first();
+                            @endphp
+
+                            @if ($latestRecording)
+                            <a href="{{ url('cameras/download-recording/'. $latestRecording->id) }}" class="btn btn-success btn-md m-1">
+                                <i class="fa fa-download"></i> Download Last Video
+                            </a>
+                            @endif
+
+                            {{-- Trigger new recording --}}
+                            <button id="recordBtn" class="btn btn-primary btn-md m-1" data-id="{{ $camera->id }}">
+                                <i class="fa fa-video"></i> Record New Video
+                            </button>
+                            <span id="recordTimer" class="ml-2 text-danger font-weight-bold"></span>
+                        </div>
+
+                    </div>
+                </div>
             </div>
-      </div>
-</div>
+        </div>
+    </div>
 <!-- #/ container -->
 </div>
 <!--**********************************
             Content body end
         ***********************************-->
-
-<!-- Interval Modal -->
-<div class="modal fade" id="intervalModal" tabindex="-1" aria-labelledby="intervalModalLabel" aria-hidden="true">
-  	<div class="modal-dialog">
-    	<div class="modal-content">
-      		<div class="modal-header">
-				<h5 class="modal-title" id="intervalModalLabel">
-					<i class="mdi mdi-calendar-edit mr-1"></i>
-					Recording Interval
-				</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-					<span aria-hidden="true">&times;</span>
-				</button>
-      		</div>
-      		<div class="modal-body">
-        		<div class="row">
-					<div class="col-12">
-						<div class="form-group">
-							<label for="streamDate" class="font-weight-bold text-dark">Date</label>
-							<input type="date" class="form-control" id="streamDate" />
-						</div>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-6">
-						<div class="form-group">
-							<label for="startTime" class="font-weight-bold text-dark">Start</label>
-							<input type="time" class="form-control" id="startTime" value="00:00" />
-						</div>
-					</div>
-					<div class="col-6">
-						<div class="form-group">
-							<label for="endTime" class="font-weight-bold text-dark">End</label>
-							<input type="time" class="form-control" id="endTime" value="23:59" />
-						</div>
-					</div>
-				</div>
-      		</div>
-      		<div class="modal-footer">
-				<!-- onclick="loadIntervalStream()" -->
-        		<button type="button" class="btn btn-dark">Search</button>
-      		</div>
-    	</div>
-  	</div>
-</div>
-
 @endsection
 @section('js')
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
@@ -191,103 +253,43 @@
 
     const video = document.getElementById('video');
  
-    const videoSrc = 'http://168.227.22.23:8888/{{ $camera->slug }}/index.m3u8';
+    const HLS_URL = 'http://127.0.0.1:8888/{{ $camera->slug }}/index.m3u8';
+    // const videoSrc = 'http://127.0.0.1:8888/{{ $camera->slug }}/index.m3u8';
 
-	const hls = new Hls({
-	//	maxBufferLength: 30,
-	//	maxMaxBufferLength: 60,
-	//	enableWorker: true,
-	//	lowLatencyMode: true,
-		debug: true
-	});
-	
-	hls.loadSource(videoSrc);
-	hls.attachMedia(video);
-	let isLiveReady = false;
+	// if (Hls.isSupported()) {
+	// 	const hls = new Hls({
+    //         liveSyncDuration: 3
+    //     });
+	// 	hls.loadSource(videoSrc);
+	// 	hls.attachMedia(video);
+	// 	hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+	// } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+	// 	video.src = videoSrc;
+	// 	video.addEventListener('loadedmetadata', () => video.play());
+	// } else {
+	// 	alert("HLS not supported in this browser.");
+	// }
 
-	if (Hls.isSupported()) {
+    function setupHls(url) 
+    {
+        if (video.canPlayType('application/vnd.apple.mpegurl')) {
+            video.src = url;
+        } else if (Hls.isSupported()) {
+            const hls = new Hls({ liveSyncDuration: 3 });
+            hls.loadSource(url);
+            hls.attachMedia(video);
 
-		hls.on(Hls.Events.MANIFEST_PARSED, () => video.play());
+            hls.on(Hls.Events.LEVEL_LOADED, (_, data) => {
+                if (data.details.live) {
+                    renderTimeline();
+                }
+            });
+        } else {
+            alert("HLS not supported in this browser.");
+        }
+    }
 
-		hls.on(Hls.Events.LEVEL_UPDATED, () => {
-			const liveEdge = hls.liveSyncPosition;
-
-			// Wait until HLS.js calculates liveSyncPosition
-			if (liveEdge) {
-
-				if (!isLiveReady && hls.liveSyncPosition) {
-      				isLiveReady = true;
-      				console.log('[✅] Live stream ready at:', hls.liveSyncPosition);
-    			}
-			}
-		});
-
-	} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-		video.src = videoSrc;
-		video.addEventListener('loadedmetadata', () => video.play());
-	} else {
-		alert("HLS not supported in this browser.");
-	}
-
-	const hourButtons = document.querySelectorAll('button[data-hours]');
-
-	// Button click event for all seek buttons
-  	hourButtons.forEach(button => {
-    	button.addEventListener('click', () => {
-			if (!isLiveReady) {
-				alert('Live stream is not ready yet. Please wait a few seconds.');
-				return;
-			}
-
-			// Remove 'active' class from all buttons
-      		hourButtons.forEach(btn => btn.classList.remove('time-active'));
-
-      		// Add 'active' to clicked button
-      		button.classList.add('time-active');
-
-			const minutes = parseInt(button.getAttribute('data-hours'), 10);
-			const secondsAgo = minutes * 60;
-			const targetTime = hls.liveSyncPosition - secondsAgo;
-
-			// Prevent going below 0
-			video.currentTime = Math.max(targetTime, 0);
-			console.log(`[⏪] Seeking ${minutes} minutes ago:`, targetTime.toFixed(2));
-    	});
-  	});
-
-// 	function loadIntervalStream() {
-// 		const date = document.getElementById('streamDate').value;
-// 		const start = document.getElementById('startTime').value;
-// 		const end = document.getElementById('endTime').value;
-
-// 		// if (!date || !start || !end) {
-// 		// 	alert("Please select all fields.");
-// 		// 	return;
-// 		// }
-
-// 		// Convert date & time into full datetime strings (e.g., 2025-07-03T10:00:00)
-// 		const startDateTime = `${date}T${start}:00`;
-// 		const endDateTime = `${date}T${end}:00`;
-
-// 		// Optional: Convert to UNIX timestamp if your backend uses that
-// 		const startTimestamp = new Date(startDateTime).getTime() / 1000;
-// 		const endTimestamp = new Date(endDateTime).getTime() / 1000;
-
-// 		console.log('Requested interval:', startDateTime, 'to', endDateTime);
-// //		https://yourdomain.com/hls/recorded.m3u8?
-// 		// 🔁 Construct a stream URL (modify based on how your backend/API supports it)
-// 		const hlsUrl = 'http://127.0.0.1:8000/storage/recordings/cam_1/recorded.m3u8?start=2025-07-04T14:00:00&end=2025-07-04T14:05:00';
-// 	//	const hlsUrl = `http://127.0.0.1:8888/recordings/{{ $camera->slug }}/recorded.m3u8?start=${startTimestamp}&end=${endTimestamp}`;
-// 		console.log(hlsUrl)
-
-// 		// Load stream
-// 		const video = document.getElementById('video');
-// 		const hls = new Hls();
-// 		hls.loadSource(hlsUrl);
-// 		hls.attachMedia(video);
-// 	}
-
-	$(document).on('click', '.delete-camera', function() {
+    $(document).on('click', '.delete-camera', function() {
 		let id = $(this).data('id');
 		if (!confirm('Are you sure to delete this camera?')) return;
 
@@ -309,7 +311,9 @@
 					toastr.error('Failed to delete.');
 				}
 		});
-	});
+    });
+
+    setupHls(HLS_URL);
 
 </script>
 <script>

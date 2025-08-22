@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Yajra\DataTables\DataTables;
 
+use Carbon\Carbon;
+
 class UserService
 {
     // initialize protected model variables
@@ -22,22 +24,14 @@ class UserService
     {
         $model = User::with('roles');
         $data = DataTables::of($model)
-        ->addColumn('role', function ($item) {
-            return $item->roles[0]->name??'';
-        })
+            ->addColumn('role', function ($item) {
+                return $item->roles[0]->name??'';
+            })
+            ->editColumn('updated_at', function ($row) {
+                return Carbon::parse($row->updated_at)->toDayDateTimeString();
+            })
             ->addColumn('action', function ($item) {
-                $action_column = '';
-                $edit_column    = "<a class='btn btn-warning btn-sm mr-2' href='users/edit/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-edit'></i>Edit</a>";
-                // $view_column    = "<a class='btn btn-info btn-sm mr-2' href='users/view/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-eye'></i>View</a>";
-
-                // if(Auth::user()->can('users_edit'))
-                $action_column .= $edit_column;
-
-                // if(Auth::user()->can('users_view'))
-                // $action_column .= $view_column;
-                
-
-                return $action_column;
+                return view('users.inc.actions', compact('item'))->render();
             })
             ->rawColumns(['role','action'])
             ->make(true);
@@ -47,6 +41,12 @@ class UserService
     public function allUser(){
         return $this->model_user->getModel()::get();
     }
+
+    public function getAllUsers()
+    {
+        return $this->model_user->getModel()::select('id', 'name', 'email', 'phone', 'created_at')->with(['roles','permissions'])->get();
+    }
+
     public function save($obj)
     {
         $user = Auth::user();

@@ -23,9 +23,11 @@
                         <div class="card">
                               <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-0">Customers</h4>
-                                    <a class="btn btn-primary btn-md m-1" href="{{ url('customers/create') }}">
-                                          <i class="fa fa-plus text-white mr-2"></i> New Customer
-                                    </a>
+                                    @if (auth()->user()->can('add customers'))
+                                        <a class="btn btn-primary btn-md m-1" href="{{ route('customers.create') }}">
+                                            <i class="fa fa-plus text-white mr-2"></i> New Customer
+                                        </a>
+                                    @endif
                               </div>
                               <div class="card-body">
                                     <div class="table-responsive">

@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('stream:check-status')->everyMinute();
         $schedule->command('detect:objects')->everyMinute();
+        $schedule->command('scan:media-recordings')->everyMinute();
     }
 
     /**

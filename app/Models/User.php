@@ -64,4 +64,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Group::class);
     }
+
+    public function notifications()
+    {
+        return $this->belongsToMany(Notification::class, 'notification_users', 'receiver_id', 'notification_id');
+    }
+
+    public function reports()
+    {
+        return $this->belongsToMany(Report::class);
+    }
 }

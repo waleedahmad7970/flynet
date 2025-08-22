@@ -29,23 +29,17 @@ class RoleService
         $data = DataTables::of($model)
             ->addColumn('permissions', function ($item) {
                 $collect = '';
-                foreach ($item->permissions as $permission) {
-                    $collect .= "<span class='btn-success pl-1 pr-1' style='border-radius: 8px;'>" . $permission->name . "</span> ";
+                if($item->name == "Super-Admin") {
+                    $collect = "<span class='btn-success p-1' style='border-radius: 8px;'>all</span>";
+                } else {
+                    foreach ($item->permissions as $permission) {
+                        $collect .= "<span class='btn-success p-1' style='border-radius: 8px;'>" . $permission->name . "</span> ";
+                    }
                 }
                 return $collect;
             })
             ->addColumn('action', function ($item) {
-                $action_column = '';
-                $edit_column    = "<a class='btn btn-warning btn-sm mr-2' href='roles/edit/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-edit'></i>Edit</a>";
-                $view_column    = "<a class='btn btn-info btn-sm mr-2' href='roles/view/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-eye'></i>View</a>";
-                
-                // if(Auth::user()->can('roles_edit'))
-                $action_column .= $edit_column;
-
-                // if(Auth::user()->can('roles_view'))
-                // $action_column .= $view_column;
-
-                return $action_column;
+                return view('roles.inc.actions', compact('item'))->render();
             })
             ->rawColumns(['permissions', 'action'])
             ->make(true);

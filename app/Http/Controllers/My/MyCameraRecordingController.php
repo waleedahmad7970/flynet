@@ -35,7 +35,7 @@ class MyCameraRecordingController extends Controller
     public function view(Request $request, $id)
     {
         // abort_if(Gate::denies('my_videos_view'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-    
+
         $search = $request->input('search');
 
         $camera_recordings = $this->camera_service->myCameraRecording();

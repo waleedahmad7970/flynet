@@ -77,13 +77,14 @@
                                     <h4 class="card-title mb-0">RTSPs Address List</h4> <br>
                                     <p>Check below for a list of the most popular RTSP addresses on the market.</p>
                               </div>
-                              <div class="card-body">
+                              <div class="card-body border">
                                     <div class="form mb-4">
+                                        <p>Fill in the fields and then copy the link, according to the manufacturer's brand. Use it when registering a new camera on the platform.</p>
                                           <div class="row">
                                                 <div class="col-md-4">
                                                       <input type="text" class="form-control" id="user" placeholder="User">
                                                 </div>
-                                                <div class="col-md-8 mt-2 mt-md-0">
+                                                <div class="col-md-8 mt-3">
                                                       <p>User to access the camera (e.g., admin).</p>
                                                 </div>
                                           </div>
@@ -92,7 +93,7 @@
                                                 <div class="col-md-4">
                                                       <input type="text" class="form-control" id="password" placeholder="Password">
                                                 </div>
-                                                <div class="col-md-8 mt-2 mt-md-0">
+                                                <div class="col-md-8 mt-3">
                                                       <p>Password of the user to access the camera (e.g., 1234).</p>
                                                 </div>
                                           </div>
@@ -101,7 +102,7 @@
                                                 <div class="col-md-4">
                                                       <input type="text" class="form-control" id="domain" placeholder="Domain">
                                                 </div>
-                                                <div class="col-md-8 mt-2 mt-md-0">
+                                                <div class="col-md-8 mt-3">
                                                       <p>Network IP or DDNS (e.g., camera.ddns.com or 192.168.1.10).</p>
                                                 </div>
                                           </div>
@@ -110,7 +111,7 @@
                                                 <div class="col-md-4">
                                                       <input type="text" class="form-control" id="port" placeholder="Port">
                                                 </div>
-                                                <div class="col-md-8 mt-2 mt-md-0">
+                                                <div class="col-md-8 mt-3">
                                                       <p>RTSP port (usually 554).</p>
                                                 </div>
                                           </div>
@@ -119,12 +120,12 @@
                                                 <div class="col-md-4">
                                                       <input type="text" class="form-control" id="manufacturer" placeholder="Manufacturer (optional)">
                                                 </div>
-                                                <div class="col-md-8 mt-2 mt-md-0">
+                                                <div class="col-md-8 mt-3">
                                                       <p>Filter by camera manufacturer.</p>
                                                 </div>
                                           </div>
 
-                                          <button class="btn btn-primary mt-3" onclick="generateRTSP()">Generate RTSP Links</button>
+                                          {{-- <button class="btn btn-primary mt-3" onclick="generateRTSP()">Generate RTSP Links</button> --}}
                                     </div>
 
                                     <!-- Output Area -->
@@ -308,6 +309,24 @@
             },
       ];
 
+      const inputs = document.querySelectorAll("input");
+
+      function showRtsp()
+      {
+            const output = document.getElementById('output');
+
+            rtspList.forEach((item, index) => {
+                  const div = document.createElement('div');
+                  div.className = 'rtsp-entry';
+                  div.innerHTML = `<strong>${item.brand}</strong>
+          <button class="btn btn-sm btn-outline-primary copy-btn" onclick="copyToClipboard('rtsp${index}')">Copy</button>
+          <div class="rtsp-url mt-2" id="rtsp${index}">${item.url}</div>
+        `;
+                output.appendChild(div);
+            });
+
+      }
+
       function generateRTSP() {
             const user = document.getElementById('user').value || 'USER';
             const password = document.getElementById('password').value || 'PASSWORD';
@@ -347,6 +366,10 @@
                   output.appendChild(div);
             });
       }
+
+      showRtsp();
+
+      inputs.forEach(input => input.addEventListener("input", generateRTSP));
 
       function copyToClipboard(id) {
             const text = document.getElementById(id).textContent;

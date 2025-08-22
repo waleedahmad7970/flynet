@@ -24,21 +24,7 @@ class CustomerService
 
             $data = DataTables::of($model)
                   ->addColumn('action', function ($item) {
-                        $action_column = '';
-                        $edit_column    = "<a class='btn btn-warning btn-sm mr-2' href='customers/edit/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-edit'></i>Edit</a>";
-                        // $view_column    = "<a class='btn btn-info btn-sm mr-2' href='customers/view/" . $item->id . "'><i title='Add' class='nav-icon mr-2 fa fa-eye'></i>View</a>";
-                        $delete_column = "<button class='btn btn-danger btn-sm delete-customer' data-id='{$item->id}'><i class='fa fa-trash'></i> Delete</button>";
-                        // if(Auth::user()->can('customers_edit'))
-                        $action_column .= $edit_column;
-
-                        // if(Auth::user()->can('customers_view'))
-                        // $action_column .= $view_column;
-
-                        // if(Auth::user()->can('customers_delete'))
-                        $action_column .= $delete_column;
-
-
-                        return $action_column;
+                    return view('customers.inc.actions', compact('item'))->render();
                   })
                   ->rawColumns(['action'])
                   ->make(true);

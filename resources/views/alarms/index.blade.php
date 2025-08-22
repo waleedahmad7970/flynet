@@ -123,9 +123,11 @@
                         <div class="card">
                               <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-0">Alarms</h4>
-                                    <a class="btn btn-primary btn-md m-1" href="{{ url('alarms/create') }}">
-                                          <i class="fa fa-plus text-white mr-2"></i> New Alarm
-                                    </a>
+                                    @if (auth()->user()->can('add alarms'))
+                                        <a class="btn btn-primary btn-md m-1" href="{{ route('alarms.create') }}">
+                                            <i class="fa fa-plus text-white mr-2"></i> New Alarm
+                                        </a>
+                                    @endif
                               </div>
                               <div class="card-body">
                                     <div class="table-responsive">
@@ -142,7 +144,7 @@
                                                       </tr>
                                                 </thead>
                                                 <tbody>
-                                                      
+
                                                 </tbody>
                                                 <tfoot>
                                                       <th>Name</th>

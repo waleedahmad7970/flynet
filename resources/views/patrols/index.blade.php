@@ -123,9 +123,11 @@
                         <div class="card">
                               <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-0">Patrols</h4>
-                                    <a class="btn btn-primary btn-md m-1" href="{{ url('patrols/create') }}">
-                                          <i class="fa fa-plus text-white mr-2"></i> New Patrol
-                                    </a>
+                                    @if (auth()->user()->can('add patrols'))
+                                        <a class="btn btn-primary btn-md m-1" href="{{ route('patrols.create') }}">
+                                            <i class="fa fa-plus text-white mr-2"></i> New Patrol
+                                        </a>
+                                    @endif
                               </div>
                               <div class="card-body">
                                     <div class="table-responsive">

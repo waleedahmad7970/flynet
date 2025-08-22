@@ -123,9 +123,11 @@
                         <div class="card">
                               <div class="card-header d-flex justify-content-between align-items-center">
                                     <h4 class="card-title mb-0">Groups</h4>
-                                    <a class="btn btn-primary btn-md m-1" href="{{ url('groups/create') }}">
-                                          <i class="fa fa-plus text-white mr-2"></i> New Group
-                                    </a>
+                                    @if (auth()->user()->can('add groups'))
+                                        <a class="btn btn-primary btn-md m-1" href="{{ route('groups.create') }}">
+                                            <i class="fa fa-plus text-white mr-2"></i> New Group
+                                        </a>
+                                    @endif
                               </div>
                               <div class="card-body">
                                     <div class="table-responsive">
