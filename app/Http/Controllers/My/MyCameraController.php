@@ -92,8 +92,8 @@ class MyCameraController extends Controller
         }
 
         $recording = $recordings->first();
-
-        return view('my.my_camera_view', compact('camera', 'cameras', 'recording','recordings'));
+        // my.my_camera_view
+        return view('cameras.view', compact('camera', 'cameras', 'recording','recordings'));
     }
 
     public function filter_minutes (Request $request)

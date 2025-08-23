@@ -24,7 +24,7 @@
                 padding: 4px 10px;
         }
     }
-                  
+
     .timeline-header {
         display: flex;
         justify-content: space-between;
@@ -103,7 +103,7 @@
             font-size: 12px
     }
 
-                        
+
     #timeline-indicator {
         position: absolute;
         top: 0;
@@ -189,7 +189,7 @@
                     <div class="card-body">
                         <video id="video" width="100%" controls autoplay muted></video>
 						<h3 class="mt-2"><b>{{ $camera->name }}</b></h3>
-                                                      
+
                         <div class="timeline-wrapper">
                             <div class="timeline-header">
                                 <div class="d-block w-100">
@@ -202,13 +202,13 @@
                                     <button data-range="30">30 Minutes</button>
                                     <button data-range="5" class="active">5 Minutes</button>
                                     <input id="time_range" name="date_range" onchange="changeDate(this)"
-                                    min="{{ now()->subDays(3)->format('Y-m-d\TH:i') }}" 
+                                    min="{{ now()->subDays(3)->format('Y-m-d\TH:i') }}"
                                     max="{{ now()->format('Y-m-d\TH:i') }}"
                                     value="{{ now()->format('Y-m-d\TH:i') }}"
                                     type="datetime-local">
                                 </div>
                             </div>
-                            
+
                             <div id="timeline-bar" class="timeline-bar">
                                 <!-- JS will populate segments here -->
                                 <div id="timeline-indicator"></div>
@@ -252,8 +252,8 @@
 <script>
 
     const video = document.getElementById('video');
- 
-    const HLS_URL = 'http://127.0.0.1:8888/{{ $camera->slug }}/index.m3u8';
+
+    const HLS_URL = 'http://168.227.22.23:8888/{{ $camera->slug }}/index.m3u8';
     // const videoSrc = 'http://127.0.0.1:8888/{{ $camera->slug }}/index.m3u8';
 
 	// if (Hls.isSupported()) {
@@ -270,7 +270,7 @@
 	// 	alert("HLS not supported in this browser.");
 	// }
 
-    function setupHls(url) 
+    function setupHls(url)
     {
         if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = url;

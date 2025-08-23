@@ -25,7 +25,7 @@ class ScanMediaMtxRecordings extends Command
      *
      * @return int
      */
-  
+
      public function handle()
 {
     $baseFolder = storage_path("app/recordings");
@@ -51,20 +51,20 @@ class ScanMediaMtxRecordings extends Command
 
         foreach ($files as $file) {
             $filename = $file->getFilename();
-        
+
             // match filenames like: 2025-08-01_07-08-53-330114.mp4
             if (preg_match('/(\d{4}-\d{2}-\d{2})_(\d{2})-(\d{2})-(\d{2})-(\d+)\.mp4$/', $filename, $matches)) {
                 $datetime = \Carbon\Carbon::createFromFormat(
                     'Y-m-d H-i-s.u',
                     "{$matches[1]} {$matches[2]}-{$matches[3]}-{$matches[4]}.{$matches[5]}"
                 );
-        
+
                 $startTime = $datetime;
                 $endTime = $startTime->copy()->addSeconds(60);
-        
-                
+
+
                     // Destination directory: public/recordings/{camera_id}
-                    $destinationDir = public_path("recordings/cam_{$camera->id}");
+                    $destinationDir = public_path("recordings/{$camera->slug}");
                     if (!is_dir($destinationDir)) {
                         mkdir($destinationDir, 0755, true);
                     }
@@ -78,7 +78,7 @@ class ScanMediaMtxRecordings extends Command
                         $this->warn("Failed to move $filename: " . $e->getMessage());
                         continue;
                     }
-                    
+
 
                 \App\Models\CameraRecording::firstOrCreate([
                     'camera_id'      => $camera->id,
@@ -89,7 +89,7 @@ class ScanMediaMtxRecordings extends Command
                 ]);
             }
         }
-        
+
 
         $this->info("Scanned: $cameraSlug | Total files: " . count($files)." | folderPath: ".$newPath);
     }
@@ -97,5 +97,5 @@ class ScanMediaMtxRecordings extends Command
     $this->info("All camera folders scanned.");
 }
 
-    
+
 }
