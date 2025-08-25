@@ -253,8 +253,8 @@
 
     const video = document.getElementById('video');
 
-   // const HLS_URL = 'http://168.227.22.23:8888/{{ $camera->slug }}/index.m3u8';
-    const HLS_URL = 'http://127.0.0.1:8888/{{ $camera->slug }}/index.m3u8';
+    const HLS_URL = 'http://168.227.22.23:8888/{{ $camera->slug }}/index.m3u8';
+    // const videoSrc = 'http://127.0.0.1:8888/{{ $camera->slug }}/index.m3u8';
 
 	// if (Hls.isSupported()) {
 	// 	const hls = new Hls({
