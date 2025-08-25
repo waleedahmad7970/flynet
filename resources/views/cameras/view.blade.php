@@ -190,7 +190,7 @@
                         <video id="video" width="100%" controls autoplay muted></video>
 						<h3 class="mt-2"><b>{{ $camera->name }}</b></h3>
 
-                        <div class="timeline-wrapper">
+                        {{-- <div class="timeline-wrapper">
                             <div class="timeline-header">
                                 <div class="d-block w-100">
                                         <h4>{{ $camera->name }}</h4>
@@ -213,7 +213,7 @@
                                 <!-- JS will populate segments here -->
                                 <div id="timeline-indicator"></div>
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="caption">
                             🔴 {{ $camera->name ?? '' }}
