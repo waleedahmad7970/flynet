@@ -87,14 +87,14 @@ class MyCameraController extends Controller
 
         // Handle date filtering
         if ($changeDate) {
-            $selectedDateTime = \Carbon\Carbon::parse($changeDate, 'Asia/Karachi');
+            $selectedDateTime = \Carbon\Carbon::parse($changeDate, 'America/New_York');
                 $recordings = $recordings->filter(function ($rec) use ($selectedDateTime, $minutes) {
                     return $rec['start_time'] >= $selectedDateTime->copy()->subMinutes($minutes + 1)
                         && $rec['start_time'] <= $selectedDateTime;
                 });
         } elseif ($minutes) {
             $recordings = $recordings->filter(function ($rec) use ($minutes) {
-                return $rec['start_time'] >= now('Asia/Karachi')->subMinutes($minutes + 1);
+                return $rec['start_time'] >= now('America/New_York')->subMinutes($minutes + 1);
             });
         }
 
@@ -121,7 +121,7 @@ class MyCameraController extends Controller
                 $datetime = \Carbon\Carbon::createFromFormat(
                     'Y-m-d H-i-s.u',
                     "{$matches[1]} {$matches[2]}-{$matches[3]}-{$matches[4]}.{$matches[5]}",
-                    'Asia/Karachi'
+                    'America/New_York'
                 );
 
                 return [
@@ -133,7 +133,7 @@ class MyCameraController extends Controller
             return null;
         })->filter()->sortBy('start_time')->values();
 
-        $cutoff = now('Asia/Karachi')->subMinutes($minutes + 1);
+        $cutoff = now('America/New_York')->subMinutes($minutes + 1);
         $recordings = $recordings->filter(function ($rec) use ($cutoff) {
             return $rec['start_time'] >= $cutoff;
         })->values();
