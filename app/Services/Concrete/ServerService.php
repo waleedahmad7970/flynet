@@ -58,6 +58,8 @@ class ServerService
             ];
         }
 
+        dd($network);
+
         $cpu = $this->getCpuInfo();
 
         return [
