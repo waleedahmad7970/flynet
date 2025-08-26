@@ -52,7 +52,7 @@ class ServerService
         preg_match_all('/\s*(\w+):\s*(\d+)\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+\d+\s+(\d+)/', $netRaw, $matches);
         $network = [];
         foreach ($matches[1] as $i => $iface) {
-            $network[$iface] = [
+            $network = [
                 'received_MB' => round($matches[2][$i] / 1024 / 1024, 2),
                 'sent_MB'     => round($matches[3][$i] / 1024 / 1024, 2)
             ];
