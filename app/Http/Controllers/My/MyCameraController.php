@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\My;
 
 use App\Http\Controllers\Controller;
-use App\Models\Camera;
 use App\Services\Concrete\CameraService;
 use App\Traits\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,22 +25,13 @@ class MyCameraController extends Controller
 
         $search = $request->input('search');
 
-        //   $cameras = $this->camera_service->myCameras();
-        $cameras = Camera::query();
-        $cameras->select(['id', 'name', 'slug', 'latitude as lat', 'longitude as lng']);
+        $cameras = $this->camera_service->myCameras();
 
-        if($search) {
-            $cameras->where('name', 'LIKE', '%'.$search.'%');
-        }
-
-        $cameras = $cameras->where('is_active', 1)->where('createdby_id', Auth()->user()->id)->orderBy('created_at', 'DESC')->get();
-
-        /*
         if ($search) {
             $cameras = $cameras->filter(function ($camera) use ($search) {
                 return stripos($camera->name, $search) !== false;
             });
-        } */
+        }
 
         return view('my.my_cameras', compact('cameras'));
     }
@@ -51,15 +41,9 @@ class MyCameraController extends Controller
         // abort_if(Gate::denies('my_cameras_view'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $search = $request->input('search');
-        $minutes = $request->input('minutes');
+        $minutes = $request->input('minutes',5);
         $changeDate = $request->input('change_date');
-
-        if (!$minutes) {
-            $minutes = 5;
-        }
-
-        $recording = null;
-        $recordings = [];
+        $recording = [];
 
         $cameras = $this->camera_service->myCameras();
 
@@ -71,58 +55,90 @@ class MyCameraController extends Controller
 
         $camera = $this->camera_service->getById($id);
 
+         // Path to camera recordings (public/recordings/cam_{id})
+        $directory = public_path("recordings/cam_{$camera->id}");
+        if (!is_dir($directory)) {
+            $recordings = collect();
+            return view('my.my_camera_view', compact('camera', 'cameras', 'recordings','recording'));
+        }
+
+        // Scan files
+        $allFiles = collect(\File::files($directory));
+        $recordings = $allFiles->map(function($file) use ($camera) {
+            $filename = $file->getFilename();
+
+            if (preg_match('/(\d{4}-\d{2}-\d{2})_(\d{2})-(\d{2})-(\d{2})-(\d+)\.mp4$/', $filename, $matches)) {
+            $datetime = \Carbon\Carbon::createFromFormat(
+                'Y-m-d H-i-s.u',
+                "{$matches[1]} {$matches[2]}-{$matches[3]}-{$matches[4]}.{$matches[5]}"
+            );
+
+            return [
+                'file_path' => asset("recordings/cam_{$camera->id}/{$filename}"),
+                'start_time' => $datetime,
+                'end_time' => $datetime->copy()->addSeconds(60), // 1-min segments
+            ];
+        }
+
+        return null;
+
+        })->filter()->sortBy('start_time')->values();
+
+
         // Handle date filtering
         if ($changeDate) {
-            // Parse the datetime-local input format and convert to Carbon instance
-            $selectedDateTime = Carbon::parse($changeDate, 'America/New_York');
-
-            // Get recordings from the selected time going back by the specified minutes
-            $recordings = CameraRecording::where('camera_id', $camera->id)
-                ->where('start_time', '>=', $selectedDateTime->copy()->subMinutes($minutes + 1))
-                ->where('start_time', '<=', $selectedDateTime)
-                ->orderBy('start_time', 'asc')
-                ->get();
-
+            $selectedDateTime = \Carbon\Carbon::parse($changeDate, 'Asia/Karachi');
+                $recordings = $recordings->filter(function ($rec) use ($selectedDateTime, $minutes) {
+                    return $rec['start_time'] >= $selectedDateTime->copy()->subMinutes($minutes + 1)
+                        && $rec['start_time'] <= $selectedDateTime;
+                });
         } elseif ($minutes) {
-            // Default behavior - get recordings from current time going back
-            $recordings = CameraRecording::where('camera_id', $camera->id)
-                ->where('start_time', '>=', now('America/New_York')->subMinutes($minutes + 1))
-                ->orderBy('start_time', 'asc')
-                ->get();
+            $recordings = $recordings->filter(function ($rec) use ($minutes) {
+                return $rec['start_time'] >= now('Asia/Karachi')->subMinutes($minutes + 1);
+            });
         }
 
         $recording = $recordings->first();
 
-        return view('my.my_camera_view', compact('camera', 'cameras', 'recording','recordings'));
+        return view('my.my_camera_view', compact('camera', 'cameras', 'recordings','recording'));
     }
 
-    public function filter_minutes (Request $request)
+    public function filter_minutes(Request $request)
     {
         $id = $request->id;
-        $minutes = $request->minutes;
-        $camera = $this->camera_service->getById($id);
-
-        $recordings = CameraRecording::select('file_path','start_time','end_time')->where('camera_id', $camera->id)
-                                    ->where('start_time', '>=', now('America/New_York')->subMinutes($minutes+1))
-                                    ->orderBy('start_time', 'asc')
-                                    ->get();
-
-        // The original code was invalid PHP syntax and unused.
-        // If you want to return the recordings with file_path as a full URL, map them here:
-        $recordings = $recordings->map(function($rec) {
-            $rec->file_path = asset($rec->file_path);
-               // Use America/New_York so the offset is +0500
-            $rec->end_time = Carbon::parse($rec->end_time, 'America/New_York')
-                                    ->format('D M d Y H:i:s') . ' GMT' . Carbon::parse($rec->end_time, 'America/New_York')->format('O');
-
-            $rec->start_time = Carbon::parse($rec->start_time, 'America/New_York')
-                                    ->format('D M d Y H:i:s') . ' GMT' . Carbon::parse($rec->start_time, 'America/New_York')->format('O');
-
-            return $rec;
-        });
+        $minutes = $request->minutes ?? 5;
 
         $camera = $this->camera_service->getById($id);
+        $directory = public_path("recordings/cam_{$camera->id}");
+        if (!is_dir($directory)) return response()->json([]);
 
-        return $recordings;
+        $files = collect(\File::files($directory));
+
+        $recordings = $files->map(function($file) use ($camera) {
+            $filename = $file->getFilename();
+
+            if (preg_match('/(\d{4}-\d{2}-\d{2})_(\d{2})-(\d{2})-(\d{2})-(\d+)\.mp4$/', $filename, $matches)) {
+                $datetime = \Carbon\Carbon::createFromFormat(
+                    'Y-m-d H-i-s.u',
+                    "{$matches[1]} {$matches[2]}-{$matches[3]}-{$matches[4]}.{$matches[5]}",
+                    'Asia/Karachi'
+                );
+
+                return [
+                    'file_path' => asset("recordings/cam_{$camera->id}/{$filename}"),
+                    'start_time' => $datetime,
+                    'end_time' => $datetime->copy()->addSeconds(60),
+                ];
+            }
+            return null;
+        })->filter()->sortBy('start_time')->values();
+
+        $cutoff = now('Asia/Karachi')->subMinutes($minutes + 1);
+        $recordings = $recordings->filter(function ($rec) use ($cutoff) {
+            return $rec['start_time'] >= $cutoff;
+        })->values();
+
+        return response()->json($recordings);
     }
+
 }

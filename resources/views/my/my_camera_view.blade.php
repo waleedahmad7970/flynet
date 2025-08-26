@@ -1,6 +1,142 @@
 @extends('layouts.app')
 @section('css')
+<style>
+    .timeline-wrapper{
+        &{
+            padding: 15px;
+            background: #fff;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        input[type="datetime-local"]{
+            border: 1px solid #cacaca;
+            border-radius: 20px;
+            padding: 4px 10px;
+        }
+    }
 
+    .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .time-filters a,.time-filters button {
+        background: #f0f0f0;
+        border: none;
+        padding: 6px 12px;
+        margin: 0 4px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: all 0.2s;
+    }
+
+    .time-filters a.active,.time-filters button.active {
+        background: #007bff;
+        color: #fff;
+    }
+
+    .timeline-bar {
+        margin-top: 10px;
+        height: 30px;
+        background: #e9f3ff;
+        position: relative;
+        border-radius: 4px;
+    }
+
+    .timeline-segment {
+        height: 10px;
+        position: absolute;
+        background: #007bff;
+        cursor: pointer;
+        border-right: 1px solid #fff;
+        transition: background 0.2s;
+        min-width: 5%;
+        bottom: 0;
+    }
+
+    .timeline-segment span{
+        color: black;
+        top: 15px;
+        position: relative;
+        left: -17px;
+        font-size: 12px;
+    }
+
+    .timeline-segment:has(span)::before {
+        content:'';
+        background:black;
+        width: 1px;
+        height: 12px;
+        display: block;
+    }
+
+    .timeline-segment:hover {
+        background: #0056b3;
+    }
+
+    .caption {
+        margin-top: 15px;
+        background: #fff;
+        padding: 10px;
+        display: inline-block;
+        border-radius: 5px;
+        font-size: 14px;
+        color: #333;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .time-filters a, .time-filters button{
+        font-size: 12px
+    }
+
+
+    #timeline-indicator {
+        position: absolute;
+        top: 0;
+        width: 2px;
+        height: 100%;
+        background: red;
+        z-index: 10;
+        pointer-events: none;
+    }
+
+    #timeline-indicator{
+        span{
+            width: 60px;
+            display: block;
+            position: relative;
+            top: -20px;
+            color: white;
+            font-size: 10px;
+            background: black;
+            padding: 3px 10px;
+            left: -30px;
+        }
+    }
+
+    #timeline-indicator ::after{
+        content: " ";
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-top: 10px solid black;
+        position: relative;
+        top: 25px;
+        left: -27px;
+    }
+
+    @media(max-width:768px){
+        .timeline-segment{
+            span {
+                display:none
+            }
+        }
+    }
+
+</style>
 @endsection
 @section('content')
 <!--**********************************
@@ -38,33 +174,30 @@
                                           <div class="col-md-8">
 
                                                 @if($recording)
-                                                    <div class="mb-3">
-                                                        <strong>{{ Carbon\Carbon::parse($recording->start_time)->format('d M Y H:i:s') }} → {{ Carbon\Carbon::parse($recording->end_time)->format('H:i:s') }}</strong>
-                                                        <video id="videoPlayer"  class="video-js vjs-default-skin vjs-fluid" controls  preload="auto"   width="100%"  height="400"></video>
-                                                        <!-- Playlist Timeline -->
-                                                        <div class="vjs-playlist my-3"></div>
-                                                    </div>
+                                                <div class="mb-3">
+                                                     <strong>
+                                                        {{ $recording['start_time']->format('d M Y H:i:s') }} → {{ $recording['end_time']->format('H:i:s') }}
+                                                    </strong>
+                                                      <video id="videoPlayer"  class="video-js vjs-default-skin vjs-fluid" controls  preload="auto"   width="100%"  height="400"></video>
+                                                      <!-- Playlist Timeline -->
+                                                      <div class="vjs-playlist my-3"></div>
+                                                  </div>
                                                 @else
-                                                    {{-- <video id="videoPlayer" width="100%" controls autoplay muted></video> --}}
-                                                    <video id="videoPlayer"  class="video-js vjs-default-skin vjs-fluid" controls  preload="auto"   width="100%"  height="400"></video>
-                                                    <div class="vjs-playlist my-3"></div>
-                                                    <div class="caption">
-                                                        🔴 {{$camera->name??''}}
-                                                        @php
-                                                        $latestRecording = $camera->recordings()->latest()->first();
-                                                        @endphp
+                                                <video id="videoPlayer"  class="video-js vjs-default-skin vjs-fluid"  width="100%" controls autoplay muted></video>
+                                                <div class="caption">
+                                                      🔴 {{$camera->name??''}}
+                                                      @if ($recording)
+                                                      <a class="btn btn-primary btn-md m-1">
+                                                            <i class="fa fa-download"></i> Save Video
+                                                      </a>
+                                                      @endif
+                                                </div>
 
-                                                        @if ($latestRecording)
-                                                        <a class="btn btn-primary btn-md m-1" href="{{ url('cameras/download-recording/'. $latestRecording->id) }}">
-                                                                <i class="fa fa-download"></i> Save Video
-                                                        </a>
-                                                        @endif
-                                                    </div>
                                                 @endif
                                                   <div class="timeline-wrapper">
                                                       <div class="timeline-header">
                                                             <div class="d-block w-100">
-                                                                <h4>🔴 {{ $camera->name }}</h4>
+                                                                  <h4>{{ $camera->name }}</h4>
                                                             </div>
                                                           <div class="time-filters">
                                                             <button data-range="1440">24 Hours</button>
@@ -145,7 +278,7 @@
             autoplay: true,
             muted: true,
             sources: [{
-                src: `http://168.227.22.23:8888/{{$camera->slug}}/index.m3u8`,
+                src: `http://127.0.0.1:8888/{{$camera->slug}}/index.m3u8`,
                 type: 'application/x-mpegURL'
             }]
         });
@@ -166,11 +299,11 @@
         //Render
         function renderTimeline(durationMinutes = 5)
         {
-
             const now = new Date();
             timelineStartTime = new Date(now.getTime() - durationMinutes * 60000);
             timelineEndTime = new Date();
             const totalMs = timelineEndTime - timelineStartTime;
+
 
             const timeline = document.getElementById('timeline-bar');
             timeline.innerHTML = '<div id="timeline-indicator"></div>'; // reset indicator
@@ -191,10 +324,14 @@
                     indicator.style.left = `${percentage}%`;
 
                     const actualTime = new Date(timelineStartTime.getTime() + currentMsOnTimeline);
-                indicator.innerHTML = `<span>${actualTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'})} </span>`;
+                    indicator.innerHTML = `<span>${actualTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', second: '2-digit'})} </span>`;
 
                 }
             });
+
+            function toUTCDate(dateString) {
+                return new Date(Date.parse(dateString)); // stays in UTC internally
+            }
 
             let updated_recordings = [];
             $.get("{{route('my-cameras.filter_minutes')}}", {
@@ -202,7 +339,6 @@
                 id: {{$camera->id}},
                 minutes: durationMinutes
             }, function(data) {
-
                 data.forEach(function(rec) {
                     updated_recordings.push({
                         start: new Date(rec.start_time),
@@ -212,7 +348,9 @@
                 });
 
                 updated_recordings.forEach((rec, index) => {
-                    console.log(rec.end , timelineStartTime);
+
+                console.log(rec.start , timelineEndTime );
+
                     if (rec.end > timelineStartTime && rec.start < timelineEndTime) {
                         const startOffset = Math.max(0, rec.start - timelineStartTime);
                         const endOffset = Math.min(totalMs, rec.end - timelineStartTime);
@@ -229,7 +367,6 @@
                             player.play();
                         };
 
-
                         const shouldShowLabel = durationMinutes === 5 || index % 5 === 0;
                         if (shouldShowLabel) {
                             const span = document.createElement('span');
@@ -243,30 +380,26 @@
         }
     });
 
-
     const recordings = [
         @foreach($recordings as $rec)
-        {
-            start: new Date("{{ $rec->start_time }}"),
-            end: new Date("{{ $rec->end_time }}"),
-            src: "{{ asset($rec->file_path) }}"
-        },
+            {
+                start: new Date("{{ $rec['start_time'] }}"),
+                end: new Date("{{ $rec['end_time'] }}"),
+                src: "{{ $rec['file_path'] }}"
+            },
         @endforeach
     ];
 
     let timelineStartTime, timelineEndTime;
 
-    function formatTime(seconds)
-    {
+    function formatTime(seconds) {
         const h = Math.floor(seconds / 3600).toString().padStart(2, '0');
         const m = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
         const s = Math.floor(seconds % 60).toString().padStart(2, '0');
-
         return `${h}:${m}:${s}`;
     }
 
-    function changeDate(el)
-    {
+    function changeDate(el){
         const selectedDate = el.value;
         const currentUrl = new URL(window.location.href);
 
@@ -279,140 +412,4 @@
 
 </script>
 
-<style>
-
-                  .timeline-wrapper{
-                        &{
-                              padding: 15px;
-                              background: #fff;
-                              border-radius: 8px;
-                              margin-bottom: 10px;
-                        }
-                        input[type="datetime-local"]{
-                              border: 1px solid #cacaca;
-                              border-radius: 20px;
-                              padding: 4px 10px;
-                        }
-                  }
-
-                  .timeline-header {
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  flex-wrap: wrap;
-                  gap: 10px;
-                  }
-
-                  .time-filters a,.time-filters button {
-                  background: #f0f0f0;
-                  border: none;
-                  padding: 6px 12px;
-                  margin: 0 4px;
-                  border-radius: 20px;
-                  cursor: pointer;
-                  font-size: 14px;
-                  transition: all 0.2s;
-                  }
-
-                  .time-filters a.active,.time-filters button.active {
-                  background: #007bff;
-                  color: #fff;
-                  }
-
-                  .timeline-bar {
-                  margin-top: 10px;
-                  height: 30px;
-                  background: #e9f3ff;
-                  position: relative;
-                  border-radius: 4px;
-                  }
-
-                  .timeline-segment {
-                  height: 10px;
-                  position: absolute;
-                  background: #007bff;
-                  cursor: pointer;
-                  border-right: 1px solid #fff;
-                  transition: background 0.2s;
-                  min-width: 5%;
-                  bottom: 0;
-                  }
-
-                  .timeline-segment span{
-                  color: black;
-                  top: 15px;
-                  position: relative;
-                  left: -17px;
-                  font-size: 12px;
-                  }
-
-                  .timeline-segment:has(span)::before {
-                        content:'';
-                        background:black;
-                        width: 1px;
-                        height: 12px;
-                        display: block;
-
-                  }
-
-                  .timeline-segment:hover {
-                  background: #0056b3;
-                  }
-                  .caption {
-                              margin-top: 15px;
-                              background: #fff;
-                              padding: 10px;
-                              display: inline-block;
-                              border-radius: 5px;
-                              font-size: 14px;
-                              color: #333;
-                              box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-                        }
-                        .time-filters a, .time-filters button{
-                              font-size: 12px
-                        }
-
-
-#timeline-indicator {
-    position: absolute;
-    top: 0;
-    width: 2px;
-    height: 100%;
-    background: red;
-    z-index: 10;
-    pointer-events: none;
-}
-
-#timeline-indicator{
-      span{
-             width: 60px;
-            display: block;
-            position: relative;
-            top: -20px;
-            color: white;
-            font-size: 10px;
-            background: black;
-            padding: 3px 10px;
-            left: -30px;
-      }
-      }
-
-      #timeline-indicator   ::after{
-            content: " ";
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid black;
-            position: relative;
-            top: 25px;
-            left: -27px;
-            }
-
-            @media(max-width:768px){
-                  .timeline-segment{
-                        span{
-                              display:none
-                        }
-                  }
-            }
-</style>
 @endsection
