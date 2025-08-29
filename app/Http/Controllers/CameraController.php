@@ -8,8 +8,8 @@ use App\Traits\JsonResponse;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Gate;
-use Symfony\Component\HttpFoundation\Response;
+// use Illuminate\Support\Facades\Gate;
+// use Symfony\Component\HttpFoundation\Response;
 
 class CameraController extends Controller
 {

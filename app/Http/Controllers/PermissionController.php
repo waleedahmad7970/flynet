@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Validation\Rule;
 
 class PermissionController extends Controller
 {
@@ -42,7 +43,14 @@ class PermissionController extends Controller
         // abort_if(Gate::denies('permissions_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         try {
             $validator = Validator::make($request->all(), [
-                'name' => ['required', 'max:50', 'string', 'unique:permissions,name,'.$request->id]
+                'name' => [
+                            'required',
+                            'max:50',
+                            'string',
+                            Rule::unique('permissions')->where(function ($query) use ($request) {
+                                return $query->where('guard_name', $request->input('guard_name', 'web'));
+                            }),
+                        ]
             ]);
 
             if ($validator->fails()) {

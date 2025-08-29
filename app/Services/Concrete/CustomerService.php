@@ -35,6 +35,11 @@ class CustomerService
             return $this->model_customer->getModel()::get();
       }
 
+      public function allCustomers()
+      {
+            return $this->model_customer->getModel()::get();
+      }
+
       public function save($obj)
       {
             $user = Auth::user();

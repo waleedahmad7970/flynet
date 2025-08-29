@@ -49,6 +49,7 @@
                                                             <th scope="col">Name</th>
                                                             <th scope="col">Email</th>
                                                             <th scope="col">Role</th>
+                                                            <th scope="col">Guard</th>
                                                             <th scope="col">Last Updated</th>
                                                             <th scope="col">Action</th>
                                                       </tr>
@@ -111,6 +112,7 @@
          {data: 'name' , name: 'name'},
          {data: 'email' , name: 'email'},
          {data: 'role' , name: 'role'},
+         {data: 'guard' , name: 'guard'},
          {data: 'updated_at' , name: 'Last Updated'},
         {data: 'action' , name: 'action' , 'sortable': false , searchable: false},",
         'route' => 'users/data',

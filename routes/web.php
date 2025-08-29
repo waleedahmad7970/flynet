@@ -210,7 +210,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('consumption-calculator', [CalculatorController::class, 'index'])->name('calculator.index');
 
-    // Notifications
+    // Reports
     Route::group(['prefix' => 'reports'], function () {
         Route::get('/', [ReportController::class, 'index'])->name('reports.index');
         Route::post('data', [ReportController::class, 'getData']);

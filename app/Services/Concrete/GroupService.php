@@ -54,6 +54,11 @@ class GroupService
             return $this->model_group->getModel()::where('is_active',1)->get();
       }
 
+      public function allGroups()
+      {
+            return $this->model_group->getModel()::with(['users', 'cameras'])->get();
+      }
+
       public function save($obj)
       {
             $user = Auth::user();

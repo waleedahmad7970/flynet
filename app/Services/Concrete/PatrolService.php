@@ -86,6 +86,11 @@ class PatrolService
             ])->findOrFail($id);
       }
 
+      public function getAllPatrols()
+      {
+            return $this->model_patrol->getModel()::with(['users', 'mosaics'])->get();
+      }
+
       //my patrols
       public function myPatrols()
       {

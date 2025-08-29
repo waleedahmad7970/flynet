@@ -66,4 +66,9 @@ class ReportService
     {
         return $this->model_report->getModel()::find($id);
     }
+
+    public function getAllReports()
+    {
+        return $this->model_report->getModel()::get();
+    }
 }

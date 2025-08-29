@@ -56,4 +56,9 @@ class NotificationService
                     ->where('status', 'open')
                     ->get();
     }
+
+    public function getNotifications()
+    {
+        return $this->model_notification->getModel()::with('users')->get();
+    }
 }

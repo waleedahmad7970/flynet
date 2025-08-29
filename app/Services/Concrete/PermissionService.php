@@ -20,12 +20,12 @@ class PermissionService
 
     public function getAll()
     {
-        return $this->model_permission->all();
+        return Permission::where('guard_name', 'web')->get();
     }
 
     public function getPermissionSource()
     {
-        $model = Permission::get();
+        $model = Permission::where('guard_name', 'web')->get();
         $data = DataTables::of($model)
             ->addColumn('action', function ($item) {
                 return view('permissions.inc.actions', compact('item'))->render();
@@ -62,5 +62,10 @@ class PermissionService
     public function getById($id)
     {
         return $this->model_permission->find($id);
+    }
+
+    public function getApiPermissions()
+    {
+        return Permission::where('guard_name', 'sanctum')->get();
     }
 }

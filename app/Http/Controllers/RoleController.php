@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Validation\Rule;
 
 class RoleController extends Controller
 {
@@ -48,7 +49,15 @@ class RoleController extends Controller
         // abort_if(Gate::denies('roles_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
         try {
             $validator = Validator::make($request->all(), [
-                'name' => ['required', 'max:50', 'string', 'unique:roles,name,' . $request->id],
+                'name' => [
+                            'required',
+                            'max:50',
+                            'string',
+                          //  'unique:roles,name,' . $request->id
+                            Rule::unique('roles')->where(function ($query) use ($request) {
+                                return $query->where('guard_name', $request->input('guard_name', 'web'));
+                            })
+                        ],
                 'permissions' => ['required', 'array'],
             ]);
 

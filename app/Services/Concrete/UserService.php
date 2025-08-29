@@ -23,9 +23,13 @@ class UserService
     public function getUserSource()
     {
         $model = User::with('roles');
+
         $data = DataTables::of($model)
             ->addColumn('role', function ($item) {
                 return $item->roles[0]->name??'';
+            })
+            ->addColumn('guard', function ($item) {
+                return $item->roles[0]->guard_name??'';
             })
             ->editColumn('updated_at', function ($row) {
                 return Carbon::parse($row->updated_at)->toDayDateTimeString();
@@ -44,7 +48,7 @@ class UserService
 
     public function getAllUsers()
     {
-        return $this->model_user->getModel()::select('id', 'name', 'email', 'phone', 'created_at')->with(['roles','permissions'])->get();
+        return $this->model_user->getModel()::select('id', 'name', 'email', 'phone', 'created_at')->with(['roles.permissions'])->get();
     }
 
     public function save($obj)
@@ -74,6 +78,11 @@ class UserService
     public function getById($id)
     {
         return $this->model_user->getModel()::with(['roles','permissions'])->find($id);
+    }
+
+    public function getByEmail($email)
+    {
+        return $this->model_user->getModel()::where('email', $email)->first();
     }
 
     public function getAdminIdsOnly(){

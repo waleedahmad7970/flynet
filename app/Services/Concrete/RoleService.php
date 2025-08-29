@@ -20,12 +20,12 @@ class RoleService
 
 
     public function getAll(){
-        return $this->model_role->all();
+        return Role::where('guard_name', 'web')->get();
     }
 
     public function getRoleSource()
     {
-        $model = Role::get();
+        $model = Role::where('guard_name', 'web')->get();
         $data = DataTables::of($model)
             ->addColumn('permissions', function ($item) {
                 $collect = '';
@@ -73,5 +73,15 @@ class RoleService
     public function getById($id)
     {
         return $this->model_role->getModel()::with('permissions')->find($id);
+    }
+
+    public function getRoles()
+    {
+        return $this->model_role->getModel()::with('permissions')->get();
+    }
+
+    public function getApiRoles()
+    {
+        return $this->model_role->getModel()::with('permissions')->where('guard_name', 'sanctum')->get();
     }
 }

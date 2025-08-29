@@ -51,6 +51,11 @@ class MosaicService
             return $this->model_mosaic->getModel()::where('is_active', 1)->get();
       }
 
+      public function allMosaics()
+      {
+            return $this->model_mosaic->getModel()::all();
+      }
+
       public function save($obj)
       {
             $user = Auth::user();
@@ -102,6 +107,7 @@ class MosaicService
                   ->where('is_active', 1)
                   ->get();
       }
+
       public function deleteById($id)
       {
             $mosaic = $this->model_mosaic->getModel()::findOrFail($id);

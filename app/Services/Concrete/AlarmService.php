@@ -78,6 +78,11 @@ class AlarmService
             return $saved_obj;
       }
 
+     public function getAllAlarms()
+      {
+            return $this->model_alarm->getModel()::get();
+      }
+
       public function getById($id)
       {
             return $this->model_alarm->getModel()::with([

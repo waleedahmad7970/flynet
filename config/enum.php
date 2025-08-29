@@ -14,6 +14,6 @@ return [
       'noStatus'        => 'Record Status Not Update Please Try Again!',
       'noEmail'         => 'Email Not Send Please Try Again!',
       'posted'          => 'Record Posted Successfully!',
-      'unposted'        => 'Record Unposted Successfully!'
-
+      'unposted'        => 'Record Unposted Successfully!',
+       'superAdmin'     => 'Super-Admin'
 ];
