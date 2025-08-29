@@ -15,7 +15,7 @@
 @if (auth()->user()->can('delete cameras'))
     <button
         class='btn btn-danger btn-sm delete-camera'
-        data-id='{$item->id}'
+        data-id="{{ $item->id }}"
     >
         <i class='fa fa-trash'></i> Delete
     </button>
