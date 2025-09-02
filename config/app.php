@@ -56,6 +56,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'streaming_url' => env('APP_STREAMING_URL', 'http://127.0.0.1'),
+
     'asset_url' => env('ASSET_URL', null),
 
     /*

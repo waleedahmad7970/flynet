@@ -112,7 +112,7 @@
     @foreach($patrol->mosaics as $mosaicIndex => $mosaic)
         @foreach($mosaic->cameras as $cameraIndex => $camera)
             const videoEl_{{ $mosaicIndex }}_{{ $cameraIndex }} = document.getElementById('video-{{ $mosaicIndex }}-{{ $cameraIndex }}');
-            const streamSrc_{{ $mosaicIndex }}_{{ $cameraIndex }} = 'http://127.0.0.1:8888/{{ $camera->slug }}/index.m3u8';
+            const streamSrc_{{ $mosaicIndex }}_{{ $cameraIndex }} = "{{ config('app.streaming_url') }}:8888/{{ $camera->slug }}/index.m3u8";
 
             if (Hls.isSupported()) {
                 const hls_{{ $mosaicIndex }}_{{ $cameraIndex }} = new Hls();

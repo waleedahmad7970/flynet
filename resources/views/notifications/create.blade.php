@@ -11,8 +11,8 @@
         <div class="row page-titles mx-0">
                 <div class="col p-md-0">
                     <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="http://168.227.22.23/dashboard">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="http://168.227.22.23/list-notification">Notifications</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('home') }}">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="{{ route('notifications.index') }}">Notifications</a></li>
                             <li class="breadcrumb-item active"><a href="javascript:void(0)">Create</a></li>
                     </ol>
                 </div>

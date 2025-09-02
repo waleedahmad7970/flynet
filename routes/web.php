@@ -36,33 +36,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'auth/login');
 Route::view('dashboard', 'home');
-// My
-// Route::view('my-cameras', 'my/my_cameras');
-// Route::view('my-camera-view', 'my/my_camera_view');
-
-// Route::view('my-patrols', 'my/my_patrols');
-// Route::view('my-patrol-view', 'my/my_patrol_view');
-
-// Route::view('my-mosaics', 'my/my_mosaics');
-// Route::view('my-mosaic-view', 'my/my_mosaic_view');
-
-// Route::view('my-alarms', 'my/my_alarms');
-// Route::view('my-videos', 'my/my_videos');
-// Route::view('my-video-view', 'my/my_video_view');
-
-
-// Route::view('list-reports', 'reports/index');
-
-
-// Route::view('list-server', 'server/index');
-
-
-// Route::view('list-notification', 'notifications/index');
-// Route::view('notification/create', 'notifications/create');
-
-// Route::view('address-list', 'address_list/index');
-
-// Route::view('dashboard', 'home');
 
 Auth::routes();
 

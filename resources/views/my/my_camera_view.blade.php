@@ -278,7 +278,7 @@
             autoplay: true,
             muted: true,
             sources: [{
-                src: `http://168.227.22.23:8888/{{$camera->slug}}/index.m3u8`,
+                src: "{{ config('app.streaming_url') }}:8888/{{$camera->slug}}/index.m3u8",
                 type: 'application/x-mpegURL'
             }]
         });

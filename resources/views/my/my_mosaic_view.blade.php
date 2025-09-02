@@ -62,7 +62,7 @@
 <script>
     @foreach($mosaic->cameras as $index => $item)
         const video{{ $index }} = document.getElementById('video-{{ $index }}');
-        const videoSrc{{ $index }} = 'http://127.0.0.1:8888/{{ $item->slug }}/index.m3u8';
+        const videoSrc{{ $index }} = "{{ config('app.streaming_url') }}:8888/{{ $item->slug }}/index.m3u8";
 
         if (Hls.isSupported()) {
             const hls{{ $index }} = new Hls();
